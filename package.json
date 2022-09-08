@@ -1,0 +1,28 @@
+{
+  "name": "platform-conversation-manager-websocket",
+  "version": "0.2.0",
+  "description": "Websocker server for the conversation manager.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "lint": "eslint --ext .js --ignore-path .gitignore --fix src",
+    "test:lint": "eslint --ext .js src",
+    "format": "prettier src/  --write",
+    "test:format": "prettier src/ --list-different"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linto-ai/platform-conversation-manager-websocket.git"
+  },
+  "author": "",
+  "license": "GNU AFFERO GPLV3",
+  "bugs": {
+    "url": "https://github.com/linto-ai/platform-conversation-manager-websocket/issues"
+  },
+  "homepage": "https://github.com/linto-ai/platform-conversation-manager-websocket#readme",
+  "devDependencies": {
+    "eslint": "^8.23.0",
+    "prettier": "^2.7.1"
+  }
+}
