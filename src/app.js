@@ -1,12 +1,14 @@
 import ora from "ora"
 import process from "process"
 import * as dotenv from "dotenv"
+import path from "path"
 
 class App {
   constructor() {
     console.log("Starting web server")
     try {
-      dotenv.config()
+      dotenv.config({ path: path.resolve(process.cwd(), ".env") })
+      dotenv.config({ path: path.resolve(process.cwd(), ".envdefault") })
 
       this.components = {}
 
@@ -19,9 +21,15 @@ class App {
   }
 
   async loadComponents() {
-    this.components = process.env.COMPONENTS.split(",").map(
-      async (componentFolderName) => await this.use(componentFolderName)
-    )
+    process.env.COMPONENTS.split(",")
+      .reduce((prev, componentFolderName) => {
+        return prev.then(async () => {
+          await this.use(componentFolderName)
+        })
+      }, Promise.resolve())
+      .then(() => {
+        // Do some stuff after all components being loaded
+      })
   }
 
   async use(componentFolderName) {
@@ -32,7 +40,7 @@ class App {
       const componentImport = await import(
         `./components/${componentFolderName}/index.js`
       )
-      const component = new componentImport.default(this)
+      const component = await new componentImport.default(this)
       this.components[component.id] = component // We register the instancied component reference in app.components object
       spinner.succeed(`Registered component : ${component.id}`)
     } catch (e) {
