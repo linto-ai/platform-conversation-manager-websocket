@@ -2,10 +2,10 @@
   "name": "platform-conversation-manager-websocket",
   "version": "0.2.0",
   "description": "Websocker server for the conversation manager.",
-  "main": "index.js",
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
+    "dev": "node src/app.js",
     "lint": "eslint --ext .js --ignore-path .gitignore --fix src",
     "test:lint": "eslint --ext .js src",
     "format": "prettier src/  --write",
@@ -24,5 +24,9 @@
   "devDependencies": {
     "eslint": "^8.23.0",
     "prettier": "^2.7.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "ora": "^6.1.2"
   }
 }
