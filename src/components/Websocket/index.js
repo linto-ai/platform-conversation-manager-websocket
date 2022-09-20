@@ -1,6 +1,5 @@
 import Component from "../component.js"
 import { Server as WsServer } from "socket.io"
-
 export default class Websocket extends Component {
   constructor(app) {
     super(app, "WebServer")
