@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "dev": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "lint": "eslint --ext .js --ignore-path .gitignore --fix src",
     "test:lint": "eslint --ext .js src",
     "format": "prettier src/  --write",
@@ -23,9 +23,11 @@
   "homepage": "https://github.com/linto-ai/platform-conversation-manager-websocket#readme",
   "devDependencies": {
     "eslint": "^8.23.0",
+    "nodemon": "^2.0.20",
     "prettier": "^2.7.1"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "dotenv": "^16.0.2",
     "ora": "^6.1.2",
     "socket.io": "^4.5.2"

@@ -1,6 +1,3 @@
-import { promises as fsPromises } from "fs"
-import path from "path"
-
 export default class Component {
   constructor(app, ...requiredComponents) {
     let missingComponents = []
