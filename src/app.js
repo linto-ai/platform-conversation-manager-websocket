@@ -9,9 +9,7 @@ class App {
     try {
       dotenv.config({ path: path.resolve(process.cwd(), ".env") })
       dotenv.config({ path: path.resolve(process.cwd(), ".envdefault") })
-
       this.components = {}
-
       process.env.COMPONENTS
         ? this.loadComponents()
         : console.log("No components registered")
