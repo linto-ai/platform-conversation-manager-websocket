@@ -6,6 +6,7 @@ import {
 
 import { Server as WsServer } from "socket.io"
 import Conversations from "./models/conversations.js"
+import updateConversationController from "./controllers/updateConversationController.js"
 
 export default class Websocket extends Component {
   constructor(app) {
@@ -40,27 +41,10 @@ export default class Websocket extends Component {
 
         console.log("update", update)
       })
+
       socket.on("conversation_update", async (data) => {
-        let conversation = Conversations.getById(data.conversationId)
-        conversation.applyBinaryDelta(data.binaryDelta)
-
-        if (data.origin === "conversation_name") {
-          let newName = conversation.getConversationName()
-          conversation.updateObj("name", newName)
-
-          let updateTitle = await updateConversation(
-            data.conversationId,
-            { name: newName },
-            data.userToken
-          )
-          if (updateTitle.status === "success") {
-            socket.dispatch("conversation_update", {
-              conversationId: data.conversationId,
-              key: "name",
-              value: newName,
-            })
-          }
-        }
+        console.log("Socket demande d'update", data)
+        updateConversationController.bind(socket)(data)
       })
     })
 
@@ -72,10 +56,14 @@ export default class Websocket extends Component {
     const conversationId = connectionData.conversationId
     const userToken = connectionData.userToken
 
-    let conversation =
-      Conversations.getById(conversationId) ||
-      (await Conversations.requestConversation(conversationId, userToken))
+    //let conversation =
+    //  Conversations.getById(conversationId) ||
+    //  (await Conversations.requestConversation(conversationId, userToken))
 
+    let conversation = await Conversations.requestConversation(
+      conversationId,
+      userToken
+    )
     socket.emit("load_conversation", {
       conversation: conversation.getObj(),
       ydoc: conversation.encodeStateVector(),

@@ -20,37 +20,70 @@ export default class Conversations {
   }
 
   static add(conversationObj, conversationId) {
-    const conv = new Conversation(conversationObj)
-    this.conversations[conversationId] = conv
-    return conv
+    let conv = this.conversations[conversationId]
+    if (conv) {
+      conv.setObj(conversationObj)
+    } else {
+      this.conversations[conversationId] = new Conversation(conversationObj)
+    }
+    return this.conversations[conversationId]
   }
 }
 
-class Conversation {
+export class Conversation {
   constructor(conversationObj) {
     this.ydoc = new Y.Doc()
-    this.obj = conversationObj
+    this.obj = conversationObj ? conversationObj : {}
 
-    this.name = this.ydoc.getText("name")
-    this.name.insert(0, conversationObj.name)
+    if (conversationObj) {
+      this.initYjsFromObj(conversationObj)
+    }
   }
 
-  applyBinaryDelta(binaryDelta) {
-    Y.applyUpdate(this.ydoc, new Uint8Array(binaryDelta))
+  applyBinaryDelta(binaryDelta, transactionName) {
+    try {
+      this.ydoc.transact(() => {
+        Y.applyUpdate(this.ydoc, new Uint8Array(binaryDelta))
+      }, transactionName)
+      this.stateVector = Y.encodeStateAsUpdate(this.ydoc)
+
+      //Y.logUpdate(new Uint8Array(binaryDelta))
+
+      console.log("new title", this.getConversationName())
+    } catch (error) {
+      console.error(error)
+    }
   }
+
   encodeStateVector() {
     return Y.encodeStateAsUpdate(this.ydoc)
   }
+
   updateObj(key, value) {
     this.obj[key] = value
   }
+
   getObj() {
     return this.obj
   }
+
+  setObj(obj) {
+    this.obj = obj
+  }
+
   getYdoc() {
     return this.ydoc
   }
+
   getConversationName() {
     return this.ydoc.getText("name").toString()
+  }
+
+  initYjsFromObj(conversationObj) {
+    this.name = this.ydoc.getText("name")
+    this.name.insert(0, conversationObj.name)
+    this.name.observe(function (YTextEvent, Transaction) {
+      console.log("title update", YTextEvent.changes.delta)
+    })
   }
 }
