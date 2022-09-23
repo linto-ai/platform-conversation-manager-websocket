@@ -82,8 +82,9 @@ export class Conversation {
   initYjsFromObj(conversationObj) {
     this.name = this.ydoc.getText("name")
     this.name.insert(0, conversationObj.name)
-    this.name.observe(function (YTextEvent, Transaction) {
-      console.log("title update", YTextEvent.changes.delta)
-    })
+  }
+
+  destroy() {
+    self.ydoc.destroy()
   }
 }
