@@ -1,5 +1,6 @@
 import axios from "axios"
 
+// eslint-disable-next-line no-undef
 const BASE_API = process.env.API_HOST
 
 async function sendRequest(url, params, data, headers, userToken) {
@@ -19,6 +20,8 @@ async function sendRequest(url, params, data, headers, userToken) {
     }
   } catch (error) {
     console.error(error)
+    //return { status: "error", data: error }
+    return null
   }
 }
 

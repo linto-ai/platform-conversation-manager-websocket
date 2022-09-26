@@ -14,7 +14,7 @@ export default class WebServer extends Component {
       res.end("")
       return
     })
-    this.httpServer.listen(env.WEBSERVER_HTTP_PORT)
+    this.httpServer.listen(env.WEBSERVER_HTTP_PORT, "0.0.0.0")
 
     return
   }

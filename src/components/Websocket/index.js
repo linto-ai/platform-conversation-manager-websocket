@@ -1,8 +1,5 @@
 import Component from "../component.js"
-import {
-  updateConversation,
-  updateUserRightInConversation,
-} from "./request/index.js"
+//import { updateUserRightInConversation } from "./request/index.js"
 
 import { Server as WsServer } from "socket.io"
 import Conversations from "./models/conversations.js"
@@ -29,6 +26,7 @@ export default class Websocket extends Component {
         console.log("Socket DISCONNECTED")
       })
 
+      /*
       // Update user rights (share/members)
       socket.on("update_users_rights", async (data) => {
         console.log("Socket update_users_rights", data)
@@ -41,32 +39,60 @@ export default class Websocket extends Component {
 
         console.log("update", update)
       })
+      */
 
       socket.on("conversation_update", async (data) => {
-        console.log("Socket demande d'update", data)
         updateConversationController.bind(socket)(data)
+      })
+      socket.on("focus_field", (data) => {
+        let conversation = Conversations.getById(data.conversationId)
+        conversation.setCursorPosition(data.userId, data.cursorPos, data.field)
+
+        socket
+          .to(`conversation/${data.conversationId}`)
+          .emit("user_focus_field", {
+            users: conversation.getUsersList(),
+          })
       })
     })
 
-    //todo : on('converastion/conversationId/sync', () => return conversation(retained, last updated))
+    this.app.io.of("/").adapter.on("create-room", (room) => {
+      console.log(`room ${room} was created`)
+    })
+
+    this.app.io.of("/").adapter.on("join-room", (room, id) => {
+      console.log(`socket ${id} has joined room ${room}`)
+    })
+
+    this.app.io.of("/").adapter.on("leave-room", (room, id) => {
+      console.log(`socket ${id} has left room ${room}`)
+    })
   }
 
   async initConversation(socket) {
     const connectionData = socket.handshake.query
     const conversationId = connectionData.conversationId
     const userToken = connectionData.userToken
-
-    //let conversation =
-    //  Conversations.getById(conversationId) ||
-    //  (await Conversations.requestConversation(conversationId, userToken))
-
+    const userId = connectionData.userId
+    console.log("Init conv", connectionData)
+    /*let conversation =
+      Conversations.getById(conversationId) ||
+      (await Conversations.requestConversation(conversationId, userToken))
+    */
     let conversation = await Conversations.requestConversation(
       conversationId,
       userToken
     )
+    if (!conversation) return
     socket.emit("load_conversation", {
       conversation: conversation.getObj(),
       ydoc: conversation.encodeStateVector(),
     })
+    conversation.addUser(userId)
+
+    let users = conversation.listUsers()
+    console.log("liste users", users)
+
+    socket.join(`conversation/${conversationId}`)
   }
 }
