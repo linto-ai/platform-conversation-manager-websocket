@@ -19,6 +19,7 @@ export default async function updateConversationController(data) {
       })
     } else throw "Update failed"
   } catch (error) {
+    // TODO: rollback yjs update
     console.error(error)
   }
 }
@@ -26,15 +27,17 @@ export default async function updateConversationController(data) {
 async function applyUpdate(data, conversation) {
   switch (data.origin) {
     case "conversation_name":
-      return await applyUdpateName(data, conversation)
+      return await applyUpdateName(data, conversation)
     case "conversation_description":
       return await applyUpdateDescription(data, conversation)
+    case "conversation_text":
+      return await applyUpdateText(data, conversation)
     case "default":
       break
   }
 }
 
-async function applyUdpateName(data, conversation) {
+async function applyUpdateName(data, conversation) {
   let newValue = conversation.getConversationName()
   conversation.updateObj("name", newValue)
   return await requestAPI(data, "name", newValue)
@@ -44,6 +47,13 @@ async function applyUpdateDescription(data, conversation) {
   let newValue = conversation.getConversationDescription()
   conversation.updateObj("description", newValue)
   return await requestAPI(data, "description", newValue)
+}
+
+async function applyUpdateText(data, conversation) {
+  let newValue = conversation.getConversationText()
+  console.log(newValue)
+  //conversation.updateObj("text", newValue)
+  return { sucess: true }
 }
 
 async function requestAPI(data, key, newValue) {

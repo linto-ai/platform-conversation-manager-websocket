@@ -4,6 +4,7 @@ import Component from "../component.js"
 import { Server as WsServer } from "socket.io"
 import Conversations from "./models/conversations.js"
 import updateConversationController from "./controllers/updateConversationController.js"
+import util from "util"
 
 export default class Websocket extends Component {
   constructor(app) {

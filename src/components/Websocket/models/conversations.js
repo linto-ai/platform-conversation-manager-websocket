@@ -49,7 +49,6 @@ export class Conversation {
       this.ydoc.transact(() => {
         Y.applyUpdate(this.ydoc, new Uint8Array(binaryDelta))
       }, transactionName)
-      this.stateVector = Y.encodeStateAsUpdate(this.ydoc)
     } catch (error) {
       console.error(error)
     }
@@ -78,38 +77,62 @@ export class Conversation {
   getConversationName() {
     return this.ydoc.getText("name").toString()
   }
+
   getConversationDescription() {
     return this.ydoc.getText("description").toString()
   }
+
+  getConversationText() {
+    return this.ydoc.getArray("text").toJSON()
+  }
+
   initYjsFromObj(conversationObj) {
-    this.name = this.ydoc.getText("name")
-    this.name.insert(0, conversationObj.name)
+    this.ydoc.getText("name").insert(0, conversationObj.name)
+    this.ydoc.getText("description").insert(0, conversationObj.description)
+    this.initText(conversationObj.text)
+  }
+
+  initText(text) {
+    for (const turn of text) {
+      const ywords = Y.Array.from(turn.words)
+      delete turn["words"]
+      const yturn = new Y.Map(Object.entries(turn))
+      yturn.set("words", ywords)
+      this.ydoc.getArray("text").push([yturn])
+    }
   }
 
   listUsers() {
     return this.users
   }
+
   getUserById(userId) {
     return this.users[userId]
   }
+
   addUser(userId) {
     this.users[userId] = new User(userId)
     return this.users[userId]
   }
+
   removeUser(userId) {
     this.users[userId] = null
   }
+
   destroy() {
     this.ydoc.destroy()
   }
+
   setCursorPosition(userId, cursorPos, inputField) {
     this.users[userId].cursorPosition = cursorPos
     this.users[userId].inputField = inputField
   }
+
   unsetCursorPosition(userId) {
     this.users[userId].cursorPosition = null
     this.users[userId].inputField = null
   }
+
   getUsersList() {
     let usersList = []
     for (let userId in this.users) {
