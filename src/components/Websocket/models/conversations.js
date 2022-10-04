@@ -85,10 +85,15 @@ export class Conversation {
   getConversationText() {
     return this.ydoc.getArray("text").toJSON()
   }
+  getSpeakers() {
+    return this.ydoc.getArray("speakers").toJSON()
+  }
 
   initYjsFromObj(conversationObj) {
     this.ydoc.getText("name").insert(0, conversationObj.name)
     this.ydoc.getText("description").insert(0, conversationObj.description)
+
+    this.initSpeakers(conversationObj.speakers)
     this.initText(conversationObj.text)
   }
 
@@ -101,7 +106,18 @@ export class Conversation {
       this.ydoc.getArray("text").push([yturn])
     }
   }
-
+  initSpeakers(speakers) {
+    try {
+      for (let spk of speakers) {
+        let ySpk = { ...spk, speaker_name: new Y.Text() }
+        ySpk.speaker_name.insert(0, spk.speaker_name)
+        let yspeaker = new Y.Map(Object.entries(ySpk))
+        this.ydoc.getArray("speakers").push([yspeaker])
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
   listUsers() {
     return this.users
   }
@@ -123,13 +139,11 @@ export class Conversation {
     this.ydoc.destroy()
   }
 
-  setCursorPosition(userId, cursorPos, inputField) {
-    this.users[userId].cursorPosition = cursorPos
+  updateUsers(userId, inputField) {
     this.users[userId].inputField = inputField
   }
 
-  unsetCursorPosition(userId) {
-    this.users[userId].cursorPosition = null
+  resetUsers(userId) {
     this.users[userId].inputField = null
   }
 
@@ -138,7 +152,6 @@ export class Conversation {
     for (let userId in this.users) {
       usersList.push({
         userId: userId,
-        cursorPosition: this.users[userId].cursorPosition,
         inputField: this.users[userId].inputField,
       })
     }
@@ -149,7 +162,6 @@ export class Conversation {
 export class User {
   constructor(userId) {
     this.userId = userId
-    this.cursorPosition = null
     this.inputField = null
   }
 }
