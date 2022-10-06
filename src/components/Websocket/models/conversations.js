@@ -85,6 +85,7 @@ export class Conversation {
   getConversationText() {
     return this.ydoc.getArray("text").toJSON()
   }
+
   getSpeakers() {
     return this.ydoc.getArray("speakers").toJSON()
   }
@@ -99,13 +100,10 @@ export class Conversation {
 
   initText(text) {
     for (const turn of text) {
-      const ywords = Y.Array.from(turn.words)
-      delete turn["words"]
-      const yturn = new Y.Map(Object.entries(turn))
-      yturn.set("words", ywords)
-      this.ydoc.getArray("text").push([yturn])
+      this.ydoc.getArray("text").push([Conversation.formatYturn(turn)])
     }
   }
+
   initSpeakers(speakers) {
     try {
       for (let spk of speakers) {
@@ -118,6 +116,7 @@ export class Conversation {
       console.error(error)
     }
   }
+
   listUsers() {
     return this.users
   }
@@ -156,6 +155,17 @@ export class Conversation {
       })
     }
     return usersList
+  }
+
+  static formatYturn(turnObj) {
+    const ywords = Y.Array.from(turnObj.words)
+    const ySegment = new Y.Text(turnObj.segment)
+    delete turnObj["words"]
+    delete turnObj["segment"]
+    const yturn = new Y.Map(Object.entries(turnObj))
+    yturn.set("words", ywords)
+    yturn.set("segment", ySegment)
+    return yturn
   }
 }
 

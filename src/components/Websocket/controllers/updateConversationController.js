@@ -1,5 +1,6 @@
 import Conversations from "../models/conversations.js"
 import { updateConversation } from "../request/index.js"
+import util from "util"
 
 export default async function updateConversationController(data) {
   try {
@@ -31,6 +32,7 @@ async function applyUpdate(data, conversation) {
     case "conversation_description":
       return await applyUpdateDescription(data, conversation)
     case "conversation_text":
+    case "conversation_insert_paragraph":
       return await applyUpdateText(data, conversation)
     case "conversation_speaker_name":
       return await applyUpdateSpeakerName(data, conversation)
@@ -58,12 +60,13 @@ async function applyUpdateSpeakerName(data, conversation) {
 }
 async function applyUpdateText(data, conversation) {
   let newValue = conversation.getConversationText()
-  console.log(newValue)
-  //conversation.updateObj("text", newValue)
-  return { sucess: true }
+  console.log(util.inspect(newValue, { depth: 4 }))
+  conversation.updateObj("text", newValue)
+  return await requestAPI(data, "text", newValue)
 }
 
 async function requestAPI(data, key, newValue) {
+  console.log(util.inspect(newValue, { depth: 4 }))
   let update = await updateConversation(
     data.conversationId,
     { [key]: newValue },
