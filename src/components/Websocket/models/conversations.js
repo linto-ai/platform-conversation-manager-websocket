@@ -167,6 +167,10 @@ export class Conversation {
     yturn.set("segment", ySegment)
     return yturn
   }
+
+  static mergeUpdates(deltas) {
+    Y.mergeUpdates(deltas)
+  }
 }
 
 export class User {
