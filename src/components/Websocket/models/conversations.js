@@ -169,7 +169,7 @@ export class Conversation {
   }
 
   static mergeUpdates(deltas) {
-    Y.mergeUpdates(deltas)
+    return Y.mergeUpdates(deltas)
   }
 }
 

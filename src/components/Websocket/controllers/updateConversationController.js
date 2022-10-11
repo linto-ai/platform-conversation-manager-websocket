@@ -6,6 +6,9 @@ export default async function updateConversationController(data) {
   try {
     let conversation = Conversations.getById(data.conversationId)
     const delta = data.binaryDelta
+    if (!delta) {
+      throw "Delta is empty"
+    }
     conversation.applyBinaryDelta(delta)
 
     let room = `conversation/${data.conversationId}`
@@ -33,6 +36,7 @@ async function applyUpdate(data, conversation) {
       return await applyUpdateDescription(data, conversation)
     case "conversation_text":
     case "conversation_insert_paragraph":
+    case "conversation_merge_paragraph":
       return await applyUpdateText(data, conversation)
     case "conversation_speaker_name":
       return await applyUpdateSpeakerName(data, conversation)
@@ -58,6 +62,7 @@ async function applyUpdateSpeakerName(data, conversation) {
   conversation.updateObj("speakers", newSpk)
   return await requestAPI(data, "speakers", newSpk)
 }
+
 async function applyUpdateText(data, conversation) {
   let newValue = conversation.getConversationText()
   console.log(util.inspect(newValue, { depth: 4 }))
