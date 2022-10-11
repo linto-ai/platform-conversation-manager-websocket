@@ -136,6 +136,7 @@ export class Conversation {
 
   destroy() {
     this.ydoc.destroy()
+    this.obj = {}
   }
 
   updateUsers(userId, inputField) {
