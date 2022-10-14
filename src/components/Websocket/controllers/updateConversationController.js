@@ -37,12 +37,30 @@ async function applyUpdate(data, conversation) {
     case "conversation_text":
     case "conversation_insert_paragraph":
     case "conversation_merge_paragraph":
+    case "conversation_edit_speaker":
       return await applyUpdateText(data, conversation)
+    case "conversation_add_speaker":
+      return await applyAddSpeaker(data, conversation)
     case "conversation_speaker_name":
       return await applyUpdateSpeakerName(data, conversation)
     case "default":
       break
   }
+}
+
+async function applyAddSpeaker(data, conversation) {
+  let newValue = {
+    text: conversation.getConversationText(),
+    speakers: conversation.getSpeakers(),
+  }
+
+  let update = await updateConversation(
+    data.conversationId,
+    newValue,
+    data.userToken
+  )
+
+  return { success: update.status == "success", newValue }
 }
 
 async function applyUpdateName(data, conversation) {

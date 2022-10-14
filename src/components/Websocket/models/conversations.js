@@ -1,5 +1,6 @@
 import * as Y from "yjs"
 import { getConversationById } from "../request/index.js"
+import { v4 as uuidv4 } from "uuid"
 
 export default class Conversations {
   static conversations = {}
@@ -167,6 +168,13 @@ export class Conversation {
     yturn.set("words", ywords)
     yturn.set("segment", ySegment)
     return yturn
+  }
+
+  static createSpeaker(name) {
+    let yspeaker = new Y.Map()
+    yspeaker.set("speaker_name", new Y.Text(name))
+    yspeaker.set("speaker_id", uuidv4())
+    return yspeaker
   }
 
   static mergeUpdates(deltas) {
