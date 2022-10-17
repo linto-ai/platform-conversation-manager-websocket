@@ -137,6 +137,7 @@ export class Conversation {
 
   destroy() {
     this.ydoc.destroy()
+    delete this.obj
     this.obj = {}
   }
 
@@ -162,8 +163,6 @@ export class Conversation {
   static formatYturn(turnObj) {
     const ywords = Y.Array.from(turnObj.words)
     const ySegment = new Y.Text(turnObj.segment)
-    delete turnObj["words"]
-    delete turnObj["segment"]
     const yturn = new Y.Map(Object.entries(turnObj))
     yturn.set("words", ywords)
     yturn.set("segment", ySegment)
