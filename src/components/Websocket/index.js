@@ -1,10 +1,11 @@
 import Component from "../component.js"
-//import { updateUserRightInConversation } from "./request/index.js"
+import { updateUserRightInConversation } from "./request/index.js"
 import { unfocusField } from "./controllers/unfocusFieldController.js"
 
 import { Server as WsServer } from "socket.io"
 import Conversations from "./models/conversations.js"
 import updateConversationController from "./controllers/updateConversationController.js"
+import updateUserRightsController from "./controllers/updateUserRightsController.js"
 
 export default class Websocket extends Component {
   constructor(app) {
@@ -28,19 +29,11 @@ export default class Websocket extends Component {
         console.log("Socket DISCONNECTED")
       })
 
-      /*// Update user rights (share/members)
+      // Update user rights (share/members)
       socket.on("update_users_rights", async (data) => {
-        console.log("Socket update_users_rights", data)
-        let update = await updateUserRightInConversation(
-          data.conversationId,
-          data.userId,
-          data.right,
-          data.userToken
-        )
-
-        console.log("update", update)
+        updateUserRightsController.bind(socket)(data)
       })
-*/
+
       socket.on("conversation_update", async (data) => {
         updateConversationController.bind(socket)(data)
       })
@@ -85,14 +78,14 @@ export default class Websocket extends Component {
     const conversationId = connectionData.conversationId
     const userToken = connectionData.userToken
     const userId = connectionData.userId
-    /*let conversation =
+    let conversation =
       Conversations.getById(conversationId) ||
       (await Conversations.requestConversation(conversationId, userToken))
-    */
+    /*
     let conversation = await Conversations.requestConversation(
       conversationId,
       userToken
-    )
+    )*/
     if (!conversation) return
     socket.emit("load_conversation", {
       conversation: conversation.getObj(),

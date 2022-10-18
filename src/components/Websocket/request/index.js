@@ -19,9 +19,8 @@ async function sendRequest(url, params, data, headers, userToken) {
       throw req
     }
   } catch (error) {
-    console.error(error)
-    //return { status: "error", data: error }
-    return null
+    return { status: "error", data: error }
+    //return null
   }
 }
 

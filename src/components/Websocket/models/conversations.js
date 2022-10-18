@@ -39,13 +39,53 @@ export class Conversation {
     this.ydoc = new Y.Doc()
     this.obj = conversationObj ? conversationObj : {}
     this.users = []
+    this.undoManagers = new Map()
+
+    this.watchProperties = [
+      this.ydoc.getText("name"),
+      this.ydoc.getText("description"),
+      this.ydoc.getArray("speakers"),
+      this.ydoc.getArray("text"),
+    ]
+
+    this.observeChange()
 
     if (conversationObj) {
       this.initYjsFromObj(conversationObj)
     }
   }
 
-  applyBinaryDelta(binaryDelta, transactionName) {
+  observeChange() {
+    this.getYdoc()
+      .getText("name")
+      .observe(() => {
+        this.updateObj("name", this.getConversationName())
+      })
+
+    this.getYdoc()
+      .getText("description")
+      .observe(() => {
+        this.updateObj("description", this.getConversationDescription())
+      })
+
+    this.getYdoc()
+      .getArray("speakers")
+      .observeDeep(() => {
+        this.updateObj("speakers", this.getSpeakers())
+      })
+
+    this.getYdoc()
+      .getArray("text")
+      .observeDeep(() => {
+        this.updateObj("text", this.getConversationText())
+      })
+  }
+
+  applyBinaryDelta(binaryDelta, transactionName, undo = false) {
+    if (undo) {
+      this.createUndoManager(transactionName)
+    }
+
     try {
       this.ydoc.transact(() => {
         Y.applyUpdate(this.ydoc, new Uint8Array(binaryDelta))
@@ -53,6 +93,29 @@ export class Conversation {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  createUndoManager(transactionName) {
+    if (!this.undoManagers.get(transactionName)) {
+      this.undoManagers.set(
+        transactionName,
+        new Y.UndoManager(this.watchProperties, {
+          trackedOrigins: new Set([transactionName]),
+        })
+      )
+    }
+
+    return this.undoManagers.get(transactionName)
+  }
+
+  undo(transactionName) {
+    this.undoManagers.get(transactionName).undo()
+  }
+
+  deleteUndoManager(transactionName) {
+    this.undoManagers.get(transactionName).stopCapturing()
+    this.undoManagers.get(transactionName).clear()
+    this.undoManagers.delete(transactionName)
   }
 
   encodeStateVector() {

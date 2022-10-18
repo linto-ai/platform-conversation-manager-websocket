@@ -1,15 +1,19 @@
 import Conversations from "../models/conversations.js"
 import { updateConversation } from "../request/index.js"
 import util from "util"
+import { v4 as uuidv4 } from "uuid"
 
 export default async function updateConversationController(data) {
+  const deltaId = uuidv4()
+  let conversation = Conversations.getById(data.conversationId)
+
   try {
-    let conversation = Conversations.getById(data.conversationId)
     const delta = data.binaryDelta
     if (!delta) {
       throw "Delta is empty"
     }
-    conversation.applyBinaryDelta(delta)
+
+    conversation.applyBinaryDelta(delta, deltaId, true)
 
     let room = `conversation/${data.conversationId}`
     let { success, newValue } = await applyUpdate(data, conversation)
@@ -21,11 +25,16 @@ export default async function updateConversationController(data) {
         newValue,
         delta,
       })
+
+      conversation.deleteUndoManager(deltaId)
     } else throw "Update failed"
   } catch (error) {
-    // TODO: rollback yjs update
+    conversation.undo(deltaId)
+    this.emit("error")
     console.error(error)
   }
+
+  conversation.deleteUndoManager(deltaId)
 }
 
 async function applyUpdate(data, conversation) {
@@ -65,36 +74,30 @@ async function applyAddSpeaker(data, conversation) {
 
 async function applyUpdateName(data, conversation) {
   let newValue = conversation.getConversationName()
-  conversation.updateObj("name", newValue)
   return await requestAPI(data, "name", newValue)
 }
 
 async function applyUpdateDescription(data, conversation) {
   let newValue = conversation.getConversationDescription()
-  conversation.updateObj("description", newValue)
   return await requestAPI(data, "description", newValue)
 }
 
 async function applyUpdateSpeakerName(data, conversation) {
   let newSpk = conversation.getSpeakers()
-  conversation.updateObj("speakers", newSpk)
   return await requestAPI(data, "speakers", newSpk)
 }
 
 async function applyUpdateText(data, conversation) {
   let newValue = conversation.getConversationText()
-  console.log(util.inspect(newValue, { depth: 4 }))
-  conversation.updateObj("text", newValue)
   return await requestAPI(data, "text", newValue)
 }
 
 async function requestAPI(data, key, newValue) {
-  console.log(util.inspect(newValue, { depth: 4 }))
   let update = await updateConversation(
     data.conversationId,
     { [key]: newValue },
     data.userToken
   )
 
-  return { success: update.status == "success", newValue }
+  return { success: update?.status == "success", newValue }
 }
