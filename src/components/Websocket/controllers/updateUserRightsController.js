@@ -10,10 +10,16 @@ export default async function updateUserRightsController(data) {
     )
 
     let room = `conversation/${data.conversationId}`
-
     if (update.status === "success") {
       // Broadcast updates on the room
-      this.broadcast.to(room).emit("update_users_rights", {
+      this.broadcast.to(room).emit("user_right_updated", {
+        origin: data.origin,
+        value: {
+          userId: data.userId,
+          right: data.right,
+        },
+      })
+      this.to(room).emit("user_right_updated", {
         origin: data.origin,
         value: {
           userId: data.userId,

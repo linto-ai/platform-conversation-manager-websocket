@@ -1,5 +1,4 @@
 import Component from "../component.js"
-import { updateUserRightInConversation } from "./request/index.js"
 import { unfocusField } from "./controllers/unfocusFieldController.js"
 
 import { Server as WsServer } from "socket.io"
@@ -81,11 +80,11 @@ export default class Websocket extends Component {
     let conversation =
       Conversations.getById(conversationId) ||
       (await Conversations.requestConversation(conversationId, userToken))
-    /*
-    let conversation = await Conversations.requestConversation(
+    /*let conversation = await Conversations.requestConversation(
       conversationId,
       userToken
     )*/
+    console.log(conversation)
     if (!conversation) return
     socket.emit("load_conversation", {
       conversation: conversation.getObj(),

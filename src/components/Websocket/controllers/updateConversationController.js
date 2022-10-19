@@ -1,6 +1,5 @@
 import Conversations from "../models/conversations.js"
 import { updateConversation } from "../request/index.js"
-import util from "util"
 import { v4 as uuidv4 } from "uuid"
 
 export default async function updateConversationController(data) {
