@@ -113,9 +113,12 @@ export class Conversation {
   }
 
   deleteUndoManager(transactionName) {
-    this.undoManagers.get(transactionName).stopCapturing()
-    this.undoManagers.get(transactionName).clear()
-    this.undoManagers.delete(transactionName)
+    const undoManager = this.undoManagers.get(transactionName)
+    if (undoManager) {
+      undoManager.stopCapturing()
+      undoManager.clear()
+      this.undoManagers.delete(transactionName)
+    }
   }
 
   encodeStateVector() {
