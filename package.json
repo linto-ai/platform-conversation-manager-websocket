@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/app.js",
+    "start":"node src/app.js",
     "lint": "eslint --ext .js --ignore-path .gitignore --fix src",
     "test:lint": "eslint --ext .js src",
     "format": "prettier src/  --write",
