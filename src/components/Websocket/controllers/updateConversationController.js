@@ -51,6 +51,8 @@ async function applyUpdate(data, conversation) {
       return await applyAddSpeaker(data, conversation)
     case "conversation_speaker_name":
       return await applyUpdateSpeakerName(data, conversation)
+    case "conversation_update_organization":
+      return await applyUpdateOrga(data, conversation)
     case "default":
       break
   }
@@ -89,6 +91,11 @@ async function applyUpdateSpeakerName(data, conversation) {
 async function applyUpdateText(data, conversation) {
   let newValue = conversation.getConversationText()
   return await requestAPI(data, "text", newValue)
+}
+
+async function applyUpdateOrga(data, conversation) {
+  let newValue = conversation.getConversationOrga()
+  return await requestAPI(data, "organization", newValue)
 }
 
 async function requestAPI(data, key, newValue) {

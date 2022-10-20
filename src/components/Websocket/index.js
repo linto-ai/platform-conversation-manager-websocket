@@ -36,6 +36,7 @@ export default class Websocket extends Component {
       socket.on("conversation_update", async (data) => {
         updateConversationController.bind(socket)(data)
       })
+
       socket.on("focus_field", (data) => {
         let conversation = Conversations.getById(data.conversationId)
         conversation.updateUsers(data.userId, data.field)
@@ -84,7 +85,6 @@ export default class Websocket extends Component {
       conversationId,
       userToken
     )*/
-    console.log(conversation)
     if (!conversation) return
     socket.emit("load_conversation", {
       conversation: conversation.getObj(),

@@ -16,7 +16,7 @@ export default class Conversations {
 
   static async requestConversation(conversationId, userToken) {
     let getConversation = await getConversationById(conversationId, userToken)
-    if (getConversation) {
+    if (getConversation.status == "success") {
       return this.add(getConversation.data, conversationId)
     } else {
       return null
@@ -46,6 +46,7 @@ export class Conversation {
       this.ydoc.getText("description"),
       this.ydoc.getArray("speakers"),
       this.ydoc.getArray("text"),
+      this.ydoc.getMap("organization"),
     ]
 
     this.observeChange()
@@ -78,6 +79,12 @@ export class Conversation {
       .getArray("text")
       .observeDeep(() => {
         this.updateObj("text", this.getConversationText())
+      })
+
+    this.getYdoc()
+      .getMap("organization")
+      .observeDeep(() => {
+        this.updateObj("organization", this.getConversationOrga())
       })
   }
 
@@ -157,12 +164,17 @@ export class Conversation {
     return this.ydoc.getArray("speakers").toJSON()
   }
 
+  getConversationOrga() {
+    return this.ydoc.getMap("organization").toJSON()
+  }
+
   initYjsFromObj(conversationObj) {
     this.ydoc.getText("name").insert(0, conversationObj.name)
     this.ydoc.getText("description").insert(0, conversationObj.description)
 
     this.initSpeakers(conversationObj.speakers)
     this.initText(conversationObj.text)
+    this.initOrganization(conversationObj.organization)
   }
 
   initText(text) {
@@ -182,6 +194,13 @@ export class Conversation {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  initOrganization(orga) {
+    const yorga = this.ydoc.getMap("organization")
+    yorga.set("organizationId", orga?.organizationId)
+    yorga.set("membersRight", orga?.membersRight)
+    yorga.set("customRights", orga?.customRights)
   }
 
   listUsers() {
