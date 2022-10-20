@@ -1,6 +1,6 @@
 {
   "name": "platform-conversation-manager-websocket",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Websocker server for the conversation manager.",
   "main": "src/app.js",
   "type": "module",
