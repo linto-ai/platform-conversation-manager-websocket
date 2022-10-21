@@ -19,6 +19,13 @@ export default async function updateUserRightsController(data) {
           right: data.right,
         },
       })
+      this.emit("user_right_updated", {
+        origin: data.origin,
+        value: {
+          userId: data.userId,
+          right: data.right,
+        },
+      })
     } else throw "Update failed"
   } catch (error) {
     console.error(error)
