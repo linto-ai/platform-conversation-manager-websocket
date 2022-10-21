@@ -2,6 +2,7 @@ import Component from "../component.js"
 import { unfocusField } from "./controllers/unfocusFieldController.js"
 
 import { Server as WsServer } from "socket.io"
+import { env } from "process"
 import Conversations from "./models/conversations.js"
 import updateConversationController from "./controllers/updateConversationController.js"
 import updateUserRightsController from "./controllers/updateUserRightsController.js"
@@ -18,6 +19,7 @@ export default class Websocket extends Component {
         origin: "*",
         methods: ["GET", "POST"],
       },
+      path: env.WEBSERVER_WS_PATH,
     })
 
     this.app.io.on("connection", async (socket) => {
