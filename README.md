@@ -14,7 +14,8 @@ npm i
 ## 2/ Setup environnement variables
 
 - WEBSERVER_HTTP_PORT: listening port for the websocket server
-- API_HOST: url of the Conversation manager api (see https://github.com/linto-ai/platform-conversation-manager)
+- CONVO_API: url of the Conversation manager api (see https://github.com/linto-ai/platform-conversation-manager)
+- WEBSERVER_WS_PATH: path where socket.io will listen (default to /socket.io)
 
 ## 3/ Run without docker
 

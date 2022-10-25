@@ -1,7 +1,7 @@
 import axios from "axios"
 
 // eslint-disable-next-line no-undef
-const BASE_API = process.env.API_HOST
+const BASE_API = process.env.CONVO_API
 
 async function sendRequest(url, params, data, headers, userToken) {
   try {
