@@ -71,3 +71,13 @@ export async function updateUserRightInConversation(
     userToken
   )
 }
+
+export async function getJobs(conversationId, userToken) {
+  return await sendRequest(
+    `${BASE_API}/conversations/${conversationId}?key=jobs`,
+    { method: "get" },
+    null,
+    null,
+    userToken
+  )
+}

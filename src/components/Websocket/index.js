@@ -6,6 +6,7 @@ import { env } from "process"
 import Conversations from "./models/conversations.js"
 import updateConversationController from "./controllers/updateConversationController.js"
 import updateUserRightsController from "./controllers/updateUserRightsController.js"
+import jobTranscriptionController from "./controllers/jobTranscriptionController.js"
 
 export default class Websocket extends Component {
   constructor(app) {
@@ -88,15 +89,23 @@ export default class Websocket extends Component {
       userToken
     )*/
     if (!conversation) return
+
     socket.emit("load_conversation", {
       conversation: conversation.getObj(),
       users: conversation.getUsersList(),
       ydoc: conversation.encodeStateVector(),
     })
-    conversation.addUser(userId)
 
+    conversation.addUser(userId)
     this.clients[socket.id] = userId
 
     socket.join(`conversation/${conversationId}`)
+
+    jobTranscriptionController(
+      conversation,
+      conversationId,
+      userToken,
+      this.app.io
+    )
   }
 }

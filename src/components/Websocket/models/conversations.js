@@ -168,6 +168,14 @@ export class Conversation {
     return this.ydoc.getMap("organization").toJSON()
   }
 
+  getTranscriptionJob() {
+    return this.getObj()?.jobs?.transcription
+  }
+
+  setTranscriptionJob(job) {
+    this.obj.jobs.transcription = job
+  }
+
   initYjsFromObj(conversationObj) {
     this.ydoc.getText("name").insert(0, conversationObj.name)
     this.ydoc.getText("description").insert(0, conversationObj.description)
