@@ -1,4 +1,5 @@
 import { getJobs } from "../request/index.js"
+import Conversations from "../models/conversations.js"
 
 const jobsFetcher = {}
 
@@ -29,6 +30,7 @@ async function fetchJob(conversation, conversationId, userToken, io) {
     if (state && state != "started") {
       conversation.setTranscriptionJob(req.data.jobs.transcription)
       let room = `conversation/${conversationId}`
+      await Conversations.requestConversation(conversationId, userToken)
       io.to(room).emit("jobs_transcription_update", { state })
     }
   }
