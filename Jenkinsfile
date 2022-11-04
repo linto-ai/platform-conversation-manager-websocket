@@ -7,9 +7,9 @@ pipeline {
     }
 
     stages{
-        stage('Docker build for master branch'){
+        stage('Docker build for main branch'){
             when{
-                branch 'master'
+                branch 'main'
             }
             steps {
                 echo 'Publishing latest'
