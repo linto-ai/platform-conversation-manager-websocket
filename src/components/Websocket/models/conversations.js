@@ -26,10 +26,11 @@ export default class Conversations {
   static add(conversationObj, conversationId) {
     let conv = this.conversations[conversationId]
     if (conv) {
-      conv.setObj(conversationObj)
-    } else {
-      this.conversations[conversationId] = new Conversation(conversationObj)
+      conv.destroy()
     }
+
+    this.conversations[conversationId] = new Conversation(conversationObj)
+
     return this.conversations[conversationId]
   }
 }
@@ -239,7 +240,7 @@ export class Conversation {
   }
 
   resetUsers(userId) {
-    this.users[userId].inputField = null
+    if (this.users[userId]?.inputField) this.users[userId].inputField = null
   }
 
   getUsersList() {
