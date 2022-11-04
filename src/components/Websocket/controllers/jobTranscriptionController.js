@@ -20,7 +20,6 @@ async function fetchJob(conversation, conversationId, userToken, io) {
   if (currentState == "started") {
     const req = await getJobs(conversationId, userToken)
     const state = req?.data?.jobs?.transcription?.state
-    console.log(req.data.jobs.transcription)
 
     setTimeout(
       () => fetchJob(conversation, conversationId, userToken, io),
