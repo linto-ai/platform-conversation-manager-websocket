@@ -1,5 +1,5 @@
 import * as Y from "yjs"
-import { getConversationById } from "../request/index.js"
+import { getConversationById, getRights } from "../request/index.js"
 import { v4 as uuidv4 } from "uuid"
 
 export default class Conversations {
@@ -32,6 +32,15 @@ export default class Conversations {
     this.conversations[conversationId] = new Conversation(conversationObj)
 
     return this.conversations[conversationId]
+  }
+
+  static async getRights(conversationId, userToken) {
+    let rights = await getRights(conversationId, userToken)
+    if (rights.status == "success") {
+      return rights
+    } else {
+      return false
+    }
   }
 }
 

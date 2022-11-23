@@ -88,6 +88,17 @@ export default class Websocket extends Component {
       conversationId,
       userToken
     )*/
+
+    const rights = await Conversations.getRights(conversationId, userToken)
+
+    if (!rights) {
+      socket.emit(
+        "error",
+        "You don't have the rights to access this conversation"
+      )
+      return
+    }
+
     if (!conversation) return
 
     socket.emit("load_conversation", {
