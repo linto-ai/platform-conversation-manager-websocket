@@ -81,3 +81,13 @@ export async function getJobs(conversationId, userToken) {
     userToken
   )
 }
+
+export async function getRights(conversationId, userToken) {
+  return await sendRequest(
+    `${BASE_API}/conversations/${conversationId}?key=sharedWithUsers&key=owner`,
+    { method: "get" },
+    null,
+    null,
+    userToken
+  )
+}
