@@ -1,12 +1,12 @@
 {
   "name": "platform-conversation-manager-websocket",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Websocker server for the conversation manager.",
   "main": "src/app.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start":"node src/app.js",
+    "start": "node src/app.js",
     "lint": "eslint --ext .js --ignore-path .gitignore --fix src",
     "test:lint": "eslint --ext .js src",
     "format": "prettier src/  --write",
